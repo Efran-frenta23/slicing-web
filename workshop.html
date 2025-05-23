@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autopulse - Workshop Information</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .logo i {
+            background: #f9b934;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f9b934;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .dashboard-container {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #1e4a4a;
+            color: white;
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(180deg, #1e3a5f 0%, #2c5f7e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #f9b934;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e4a4a;
+            font-weight: bold;
+        }
+
+        .mobile-menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            border-bottom: 1px solid #2d5a5a;
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 12px;
+        }
+
+        .nav-link {
+            color: #b8d4d3;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 3px solid #f9b934;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 2rem;
+            background: #f8f9fa;
+            overflow-x: auto;
+        }
+
+        .content-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+
+        .section-header {
+            background-color: #f9b934;
+            color: black;
+            padding: 15px;
+            margin: -2rem -2rem 2rem -2rem;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 5px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #138496;
+        }
+
+        .action-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 2px;
+            background: #f9b934;
+            color: white;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 25px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            width: 35px;
+            height: 35px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .pagination button.active {
+            background: #17a2b8;
+            color: white;
+            border-color: #17a2b8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .sidebar {
+                position: absolute;
+                z-index: 1000;
+                height: calc(100vh - 60px);
+                width: 100%;
+            }
+
+            .sidebar-header {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .nav-menu.show {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .section-header {
+                font-size: 24px;
+                margin: -1rem -1rem 1rem -1rem;
+            }
+
+            .content-header {
+                margin: -1rem -1rem 1rem -1rem;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .data-table th, .data-table td {
+                padding: 8px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                AUTOPULSE
+                <small style="font-size: 12px; margin-left: 5px;">Dashboard</small>
+            </div>
+            <div class="breadcrumb">
+                <i class="fas fa-info-circle"></i>
+                <span>Workshop Information</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <i class="fas fa-bell" style="color: #bdc3c7;"></i>
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div style="font-size: 12px;">Autopulse</div>
+                    <div style="font-size: 10px; color: #bdc3c7;">Super Admin</div>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 10px; color: #bdc3c7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">AP</div>
+                    <div>
+                        <div>AUTOPULSE</div>
+                        <div style="font-size: 12px; opacity: 0.8;">Dashboard</div>
+                    </div>
+                </div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service.html" class="nav-link">
+                        <i class="fas fa-wrench"></i> Service
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="workshop.html" class="nav-link active">
+                        <i class="fas fa-info-circle"></i> Workshop Information
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="member.html" class="nav-link">
+                        <i class="fas fa-users"></i> Member
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="captain.html" class="nav-link">
+                        <i class="fas fa-user-tie"></i> Captain
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="brand.html" class="nav-link">
+                        <i class="fas fa-car"></i> Available Brand
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="sparepart.html" class="nav-link">
+                        <i class="fas fa-cog"></i> Spare Part
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="carlist.html" class="nav-link">
+                        <i class="fas fa-list"></i> Car List
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="serviceactivity.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i> Service Activity
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="logbook.html" class="nav-link">
+                        <i class="fas fa-book"></i> Logbook
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="servicedetail.html" class="nav-link">
+                        <i class="fas fa-tools"></i> Service Detail
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="finance.html" class="nav-link">
+                        <i class="fas fa-dollar-sign"></i> Finance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="promotion.html" class="nav-link">
+                        <i class="fas fa-percent"></i> Promotion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-user-plus"></i> Admin Registration
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="content-header">
+                <div class="page-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Workshop Information</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <div>
+                        <div style="font-size: 14px;">Autopulse</div>
+                        <div style="font-size: 12px; color: #bdc3c7;">Super Admin</div>
+                    </div>
+                    <i class="fas fa-chevron-down" style="font-size: 10px; color: #bdc3c7;"></i>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="section-header">Workshop Information</div>
+                <div class="content-card">
+                    <div class="card-header">
+                        <h2>Workshops</h2>
+                        <div>
+                            <small style="color: #bdc3c7; margin-right: 10px;">Total Workshops: 5</small>
+                            <button class="btn btn-primary" onclick="showModal('addWorkshopModal')">Add Workshop</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <div class="search-box">
+                                <input type="text" placeholder="Search by Workshop Name">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Workshop Name</th>
+                                    <th>Location</th>
+                                    <th>Contact</th>
+                                    <th>Captain</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Jakarta Branch</td>
+                                    <td>Jakarta</td>
+                                    <td>+62 21 1234 5678</td>
+                                    <td>Maryadi</td>
+                                    <td>
+                                        <button class="action-btn" onclick="showModal('editWorkshopModal')"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn" style="background: #dc3545;"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Bandung Branch</td>
+                                    <td>Bandung</td>
+                                    <td>+62 22 8765 4321</td>
+                                    <td>Slamet</td>
+                                    <td>
+                                        <button class="action-btn" onclick="showModal('editWorkshopModal')"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn" style="background: #dc3545;"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Surabaya Branch</td>
+                                    <td>Surabaya</td>
+                                    <td>+62 31 5678 1234</td>
+                                    <td>Yanto</td>
+                                    <td>
+                                        <button class="action-btn" onclick="showModal('editWorkshopModal')"><i class="fas fa-edit"></i></button>
+                                        <button class="action-btn" style="background: #dc3545;"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <button><i class="fas fa-chevron-left"></i></button>
+                            <button class="active">1</button>
+                            <button>2</button>
+                            <button>3</button>
+                            <button>4</button>
+                            <span>...</span>
+                            <button>10</button>
+                            <button><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal" id="addWorkshopModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Workshop</h2>
+                <button class="close-btn" onclick="hideModal('addWorkshopModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Workshop Name</label>
+                    <input type="text" class="form-input" placeholder="Enter workshop name">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" placeholder="Enter location">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact</label>
+                    <input type="text" class="form-input" placeholder="Enter contact number">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Captain</label>
+                    <select class="form-input">
+                        <option>Maryadi</option>
+                        <option>Slamet</option>
+                        <option>Yanto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('addWorkshopModal')">Cancel</button>
+                <button class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editWorkshopModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit Workshop</h2>
+                <button class="close-btn" onclick="hideModal('editWorkshopModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Workshop Name</label>
+                    <input type="text" class="form-input" value="Jakarta Branch">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" value="Jakarta">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact</label>
+                    <input type="text" class="form-input" value="+62 21 1234 5678">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Captain</label>
+                    <select class="form-input">
+                        <option selected>Maryadi</option>
+                        <option>Slamet</option>
+                        <option>Yanto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('editWorkshopModal')">Cancel</button>
+                <button class="btn btn-primary">Update</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('show');
+        }
+
+        function setActiveLink() {
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                if (link.href === window.location.href) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        window.onload = setActiveLink;
+    </script>
+</body>
+</html>

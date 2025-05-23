@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autopulse - Service Detail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .logo i {
+            background: #f9b934;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #bdc3c7;
+            font-size: 14px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f9b934;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .dashboard-container {
+            display: flex;
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #1e4a4a;
+            color: white;
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(180deg, #1e3a5f 0%, #2c5f7e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #f9b934;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1e4a4a;
+            font-weight: bold;
+        }
+
+        .mobile-menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .nav-item {
+            border-bottom: 1px solid #2d5a5a;
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 12px;
+        }
+
+        .nav-link {
+            color: #b8d4d3;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 3px solid #f9b934;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 2rem;
+            background: #f8f9fa;
+            overflow-x: auto;
+        }
+
+        .content-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+        }
+
+        .section-header {
+            background-color: #f9b934;
+            color: black;
+            padding: 15px;
+            margin: -2rem -2rem 2rem -2rem;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 5px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5f7e 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .service-detail {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section h3 {
+            color: #2c5f7e;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            width: 120px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .detail-value {
+            flex: 1;
+            color: #333;
+        }
+
+        .transaction-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            color: #2c5f7e;
+            font-size: 16px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #138496;
+        }
+
+        .btn-action {
+            background: #17a2b8;
+            color: white;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .sidebar {
+                position: absolute;
+                z-index: 1000;
+                height: calc(100vh - 60px);
+                width: 100%;
+            }
+
+            .sidebar-header {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .nav-menu.show {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .section-header {
+                font-size: 24px;
+                margin: -1rem -1rem 1rem -1rem;
+            }
+
+            .content-header {
+                margin: -1rem -1rem 1rem -1rem;
+            }
+
+            .service-detail {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <div class="logo">
+                <i class="fas fa-car"></i>
+                AUTOPULSE
+                <small style="font-size: 12px; margin-left: 5px;">Dashboard</small>
+            </div>
+            <div class="breadcrumb">
+                <i class="fas fa-info-circle"></i>
+                <span>Service Detail</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <i class="fas fa-bell" style="color: #bdc3c7;"></i>
+            <div class="user-info">
+                <div class="user-avatar">A</div>
+                <div>
+                    <div style="font-size: 12px;">Autopulse</div>
+                    <div style="font-size: 10px; color: #bdc3c7;">Super Admin</div>
+                </div>
+                <i class="fas fa-chevron-down" style="font-size: 10px; color: #bdc3c7;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">AP</div>
+                    <div>
+                        <div>AUTOPULSE</div>
+                        <div style="font-size: 12px; opacity: 0.8;">Dashboard</div>
+                    </div>
+                </div>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="service.html" class="nav-link">
+                        <i class="fas fa-wrench"></i> Service
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="workshop.html" class="nav-link">
+                        <i class="fas fa-info-circle"></i> Workshop Information
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="member.html" class="nav-link">
+                        <i class="fas fa-users"></i> Member
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="captain.html" class="nav-link">
+                        <i class="fas fa-user-tie"></i> Captain
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="brand.html" class="nav-link">
+                        <i class="fas fa-car"></i> Available Brand
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="sparepart.html" class="nav-link">
+                        <i class="fas fa-cog"></i> Spare Part
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="carlist.html" class="nav-link">
+                        <i class="fas fa-list"></i> Car List
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="serviceactivity.html" class="nav-link">
+                        <i class="fas fa-clipboard-list"></i> Service Activity
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="logbook.html" class="nav-link">
+                        <i class="fas fa-book"></i> Logbook
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="servicedetail.html" class="nav-link active">
+                        <i class="fas fa-tools"></i> Service Detail
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="finance.html" class="nav-link">
+                        <i class="fas fa-dollar-sign"></i> Finance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="promotion.html" class="nav-link">
+                        <i class="fas fa-percent"></i> Promotion
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin.html" class="nav-link">
+                        <i class="fas fa-user-plus"></i> Admin Registration
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="content-header">
+                <div class="page-title">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Service Detail</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <div>
+                        <div style="font-size: 14px;">Autopulse</div>
+                        <div style="font-size: 12px; color: #bdc3c7;">Super Admin</div>
+                    </div>
+                    <i class="fas fa-chevron-down" style="font-size: 10px; color: #bdc3c7;"></i>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <div class="section-header">Service Detail</div>
+                <div class="content-card">
+                    <div class="card-header">
+                        <i class="fas fa-arrow-left" style="margin-right: 10px; cursor: pointer;"></i>
+                        <h2>Service Detail</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="service-detail">
+                            <div>
+                                <div class="detail-section">
+                                    <div class="detail-row">
+                                        <div class="detail-label">Service Date</div>
+                                        <div class="detail-value">: Saturday, 22 December 2024 13:00 - 14:00</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Last Mileage</div>
+                                        <div class="detail-value">: 20,123 km</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Captain</div>
+                                        <div class="detail-value">: Maryadi</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Branch</div>
+                                        <div class="detail-value">: Honda Denpasar</div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-section">
+                                    <h3>Member Information</h3>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Name</div>
+                                        <div class="detail-value">Anne</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Member ID</div>
+                                        <div class="detail-value">123456789</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Point</div>
+                                        <div class="detail-value">2,600</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Phone</div>
+                                        <div class="detail-value">628123456789</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Address</div>
+                                        <div class="detail-value">Jl. Siliwangi No.76, Pakuan, Kec. Bogor Selatan, Kota Bogor, Jawa Barat</div>
+                                    </div>
+                                </div>
+
+                                <div class="detail-section">
+                                    <h3>Car Information</h3>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Brand</div>
+                                        <div class="detail-value">Toyota</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Model</div>
+                                        <div class="detail-value">Rush</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">License Number</div>
+                                        <div class="detail-value">BA 1234 OOD</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">VIN</div>
+                                        <div class="detail-value">123456789</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Driver Name</div>
+                                        <div class="detail-value">Yanto</div>
+                                    </div>
+                                    <div class="detail-row">
+                                        <div class="detail-label">Year</div>
+                                        <div class="detail-value">2024</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="transaction-summary">
+                                    <h3 style="color: #2c5f7e; margin-bottom: 15px;">Transaction Detail</h3>
+                                    <div style="margin-bottom: 15px;">
+                                        <div style="font-weight: 600; margin-bottom: 8px;">Tire Replacement - Bridgestone</div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #666;">
+                                            <span>Service Fee</span>
+                                            <span>Rp 50,000</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #666;">
+                                            <span>Price</span>
+                                            <span>Rp 600,000 x4</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #e74c3c;">
+                                            <span>Discount 10%</span>
+                                            <span>-Rp 240,000</span>
+                                        </div>
+                                    </div>
+                                    <div style="margin-bottom: 15px;">
+                                        <div style="font-weight: 600; margin-bottom: 8px;">Engine Oil Replacement - Castrol</div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #666;">
+                                            <span>Service Fee</span>
+                                            <span>Rp 50,000</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: #666;">
+                                            <span>Price</span>
+                                            <span>Rp 600,000 x1</span>
+                                        </div>
+                                    </div>
+                                    <hr style="margin: 15px 0;">
+                                    <div class="transaction-item">
+                                        <span>Subtotal</span>
+                                        <span>Rp 2,450,000</span>
+                                    </div>
+                                    <div class="transaction-item">
+                                        <span>Total Discount</span>
+                                        <span>Rp 240,000</span>
+                                    </div>
+                                    <div class="transaction-item">
+                                        <span>Tax</span>
+                                        <span>Rp 245,000</span>
+                                    </div>
+                                    <div class="transaction-item">
+                                        <span>Grand Total</span>
+                                        <span>Rp 2,455,000</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px; margin: 15px 0;">
+                                        <span style="font-weight: 600;">Payment Status</span>
+                                        <div style="width: 12px; height: 12px; background: #28a745; border-radius: 50%;"></div>
+                                    </div>
+                                    <div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+                                        <small style="color: #856404;">Warranty Note</small>
+                                    </div>
+                                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;">Download Invoice</button>
+                                    <button class="btn btn-action" style="width: 100%;">See Image (Transfer Proof & Quotation)</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('show');
+        }
+
+        function setActiveLink() {
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                if (link.href === window.location.href) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        window.onload = setActiveLink;
+    </script>
+</body>
+</html>
