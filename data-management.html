@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autopulse - Workshop Information</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: #2c5f5a;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 60px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #4a7c7a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+
+        .orange-bar {
+            height: 8px;
+            background: #ffc04d;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 999;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 68px;
+            min-height: calc(100vh - 68px);
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c5f5a;
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            top: 68px;
+            bottom: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #3d6f6a;
+            margin-bottom: 20px;
+        }
+
+        .logo h2 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo small {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu > li {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+
+        .sidebar-menu > li:hover {
+            background: #3d6f6a;
+        }
+
+        .sidebar-menu > li.active {
+            background: #4a7c7a;
+            border-left-color: #ffc04d;
+        }
+
+        .sidebar-menu > li i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .submenu {
+            max-height: 0;
+            overflow: hidden;
+            list-style: none;
+            background: #3d6f6a;
+            margin-left: 20px;
+            transition: max-height 0.3s ease;
+        }
+
+        .submenu li {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+        }
+
+        .submenu li:hover {
+            background: #4a7c7a;
+        }
+
+        .submenu li.active {
+            border-left-color: #ffc04d;
+        }
+
+        .submenu li i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu > li.open .submenu {
+            max-height: 500px; /* Adjust based on submenu height */
+        }
+
+        .toggle-icon {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            flex: 1;
+            padding: 30px;
+            background: white;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-title {
+            background: #ffc04d;
+            color: #333;
+            padding: 15px 20px;
+            margin: -30px -30px 30px -30px;
+            font-size: 24px;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+
+            .sidebar {
+                position: absolute;
+                z-index: 1000;
+                height: calc(100vh - 68px);
+                width: 100%;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .page-title {
+                margin: -15px -15px 15px -15px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        if (!localStorage.getItem('isLoggedIn')) {
+            window.location.href = 'login.html';
+        }
+    </script>
+
+    <div class="header">
+        <div class="header-left">
+            <button class="hamburger" onclick="toggleSidebar()">☰</button>
+            <h1>Autopulse Dashboard</h1>
+        </div>
+        <div class="user-info">
+            <i class="fas fa-bell"></i>
+            <div class="user-avatar">AU</div>
+            <span>Autopulse Super Admin</span>
+        </div>
+    </div>
+
+    <div class="orange-bar"></div>
+
+    <div class="container">
+        <nav class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-car"></i> AUTOPULSE</h2>
+                <small>Dashboard</small>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li class="has-submenu">
+                    <a href="#" onclick="toggleSubmenu(event, this)" aria-expanded="true" aria-controls="data-management-submenu">
+                        <i class="fas fa-folder"></i> Data Management
+                        <i class="fas fa-chevron-down toggle-icon open"></i>
+                    </a>
+                    <ul class="dropdown" id="data-management-submenu" style="max-height: 500px;">
+                        <li class="active"><a href="workshop.html"><i class="fas fa-building"></i> Workshop Information</a></li>
+                        <li><a href="member.html"><i class="fas fa-users"></i> Member</a></li>
+                        <li><a href="captain.html"><i class="fas fa-user-tie"></i> Captain</a></li>
+                        <li><a href="available-brand.html"><i class="fas fa-car"></i> Available Brand</a></li>
+                        <li><a href="service.html"><i class="fas fa-wrench"></i> Service</a></li>
+                        <li><a href="sparepart.html"><i class="fas fa-cogs"></i> Sparepart</a></li>
+                        <li><a href="carlist.html"><i class="fas fa-list"></i> Car List</a></li>
+                    </ul>
+                </li>
+                <li><a href="service-activity.html"><i class="fas fa-wrench"></i> Service Availability</a></li>
+                <li><a href="logbook.html"><i class="fas fa-book"></i> Logbook</a></li>
+                <li><a href="finance.html"><i class="fas fa-dollar-sign"></i> Finance</a></li>
+                <li><a href="promotion.html"><i class="fas fa-percent"></i> Promotion</a></li>
+                <li><a href="brand.html"><i class="fas fa-car"></i> Brand Registration</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-title">Workshop Information</div>
+            <div class="empty-state">
+                <i class="fas fa-building"></i>
+                <h3>No Workshop Information Available</h3>
+                <p>Please add or manage workshop details to view content here.</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function toggleSubmenu(event, element) {
+            event.preventDefault();
+            const parentLi = element.parentElement;
+            const submenu = parentLi.querySelector('.submenu');
+            const toggleIcon = parentLi.querySelector('.toggle-icon');
+            const isOpen = parentLi.classList.contains('open');
+
+            // Close all open submenus
+            document.querySelectorAll('.sidebar-menu > li.open').forEach(li => {
+                li.classList.remove('open');
+                li.querySelector('.submenu').style.maxHeight = '0';
+                li.querySelector('.toggle-icon').classList.remove('open');
+                li.querySelector('a').setAttribute('aria-expanded', 'false');
+            });
+
+            // Toggle current submenu
+            if (!isOpen) {
+                parentLi.classList.add('open');
+                submenu.style.maxHeight = submenu.scrollHeight + 'px';
+                toggleIcon.classList.add('open');
+                element.setAttribute('aria-expanded', 'true');
+            } else {
+                element.setAttribute('aria-expanded', 'false');
+            }
+        }
+
+        function setActiveItem() {
+            const links = document.querySelectorAll('.sidebar-menu a');
+            links.forEach(link => {
+                if (link.href === window.location.href) {
+                    link.parentElement.classList.add('active');
+                    // If submenu item is active, open the parent submenu
+                    const parentSubmenu = link.closest('.submenu');
+                    if (parentSubmenu) {
+                        const parentLi = parentSubmenu.parentElement;
+                        parentLi.classList.add('open');
+                        parentSubmenu.style.maxHeight = parentSubmenu.scrollHeight + 'px';
+                        parentLi.querySelector('.toggle-icon').classList.add('open');
+                        parentLi.querySelector('a').setAttribute('aria-expanded', 'true');
+                    }
+                } else {
+                    link.parentElement.classList.remove('active');
+                }
+            });
+        }
+
+        window.onload = setActiveItem;
+    </script>
+</body>
+</html>
