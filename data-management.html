@@ -3,374 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Autopulse - Workshop Information</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Autopulse — Data Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .data-hub-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: var(--s-4);
+            margin-bottom: var(--s-6);
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-        .header {
-            background: #2c5f5a;
-            color: white;
-            padding: 15px 20px;
+        .hub-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            padding: var(--s-5);
+            transition: all var(--transition);
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            height: 60px;
+            flex-direction: column;
+            gap: var(--s-3);
+            text-decoration: none;
+            color: inherit;
         }
-
-        .header h1 {
-            font-size: 18px;
-            font-weight: 500;
+        .hub-card:hover {
+            border-color: var(--brand-black);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #4a7c7a;
-            display: flex;
+        .hub-icon {
+            width: 44px; height: 44px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            color: white;
+            border-radius: var(--radius-md);
+            background: var(--brand-yellow);
+            color: var(--brand-black);
+            font-size: 18px;
         }
-
-        .orange-bar {
-            height: 8px;
-            background: #ffc04d;
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            z-index: 999;
+        .hub-card .hub-icon.alt {
+            background: var(--brand-black);
+            color: var(--brand-yellow);
         }
-
-        .container {
+        .hub-title {
+            font-size: var(--fs-lg);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .hub-count {
+            font-size: var(--fs-3xl);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        .hub-sub {
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
+        }
+        .hub-card-footer {
             display: flex;
-            margin-top: 68px;
-            min-height: calc(100vh - 68px);
-        }
-
-        .sidebar {
-            width: 250px;
-            background: #2c5f5a;
-            color: white;
-            padding: 20px 0;
-            position: fixed;
-            top: 68px;
-            bottom: 0;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-100%);
-        }
-
-        .logo {
-            padding: 0 20px 20px;
-            border-bottom: 1px solid #3d6f6a;
-            margin-bottom: 20px;
-        }
-
-        .logo h2 {
-            font-size: 16px;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: var(--s-3);
+            border-top: 1px solid var(--border-soft);
+            margin-top: auto;
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
-
-        .logo small {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu > li {
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            border-left: 3px solid transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-        }
-
-        .sidebar-menu > li:hover {
-            background: #3d6f6a;
-        }
-
-        .sidebar-menu > li.active {
-            background: #4a7c7a;
-            border-left-color: #ffc04d;
-        }
-
-        .sidebar-menu > li i {
-            width: 20px;
-            text-align: center;
-        }
-
-        .submenu {
-            max-height: 0;
-            overflow: hidden;
-            list-style: none;
-            background: #3d6f6a;
-            margin-left: 20px;
-            transition: max-height 0.3s ease;
-        }
-
-        .submenu li {
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            border-left: 3px solid transparent;
-        }
-
-        .submenu li:hover {
-            background: #4a7c7a;
-        }
-
-        .submenu li.active {
-            border-left-color: #ffc04d;
-        }
-
-        .submenu li i {
-            width: 20px;
-            text-align: center;
-        }
-
-        .sidebar-menu > li.open .submenu {
-            max-height: 500px; /* Adjust based on submenu height */
-        }
-
-        .toggle-icon {
-            margin-left: auto;
-            font-size: 12px;
-            transition: transform 0.3s;
-        }
-
-        .toggle-icon.open {
-            transform: rotate(180deg);
-        }
-
-        .main-content {
-            margin-left: 250px;
-            flex: 1;
-            padding: 30px;
-            background: white;
-            margin: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .page-title {
-            background: #ffc04d;
-            color: #333;
-            padding: 15px 20px;
-            margin: -30px -30px 30px -30px;
-            font-size: 24px;
-            font-weight: 600;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #666;
-        }
-
-        .empty-state i {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #ccc;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-
-        .empty-state p {
-            font-size: 14px;
-        }
-
-        .hamburger {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-            }
-
-            .sidebar {
-                position: absolute;
-                z-index: 1000;
-                height: calc(100vh - 68px);
-                width: 100%;
-            }
-
-            .main-content {
-                margin-left: 0;
-                margin: 10px;
-                padding: 15px;
-            }
-
-            .page-title {
-                margin: -15px -15px 15px -15px;
-                font-size: 20px;
-            }
-        }
+        .hub-card-footer i { font-size: 10px; }
     </style>
 </head>
 <body>
-    <script>
-        if (!localStorage.getItem('isLoggedIn')) {
-            window.location.href = 'login.html';
-        }
-    </script>
-
-    <div class="header">
-        <div class="header-left">
-            <button class="hamburger" onclick="toggleSidebar()">☰</button>
-            <h1>Autopulse Dashboard</h1>
+    <!-- Header -->
+    <header role="banner">
+        <div>
+            <button onclick="toggleSidebar()" aria-label="Toggle Sidebar"><i class="fas fa-bars"></i></button>
+            <a href="#" aria-label="Autopulse Dashboard"><i class="fas fa-car"></i> Autopulse</a>
+            <nav aria-label="Breadcrumb">
+                <a href="#">Home</a>
+                <i class="fas fa-chevron-right"></i>
+                <span>Data Management</span>
+            </nav>
         </div>
-        <div class="user-info">
-            <i class="fas fa-bell"></i>
-            <div class="user-avatar">AU</div>
-            <span>Autopulse Super Admin</span>
-        </div>
-    </div>
-
-    <div class="orange-bar"></div>
-
-    <div class="container">
-        <nav class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2><i class="fas fa-car"></i> AUTOPULSE</h2>
-                <small>Dashboard</small>
+        <div>
+            <button aria-label="Notifications"><i class="fas fa-bell"></i></button>
+            <div aria-label="User Profile">
+                <div>A</div>
+                <div>
+                    <div>Autopulse</div>
+                    <div>Super Admin</div>
+                </div>
+                <i class="fas fa-chevron-down"></i>
             </div>
-            <ul class="sidebar-menu">
-                <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-                <li class="has-submenu">
-                    <a href="#" onclick="toggleSubmenu(event, this)" aria-expanded="true" aria-controls="data-management-submenu">
-                        <i class="fas fa-folder"></i> Data Management
-                        <i class="fas fa-chevron-down toggle-icon open"></i>
-                    </a>
-                    <ul class="dropdown" id="data-management-submenu" style="max-height: 500px;">
-                        <li class="active"><a href="workshop.html"><i class="fas fa-building"></i> Workshop Information</a></li>
-                        <li><a href="member.html"><i class="fas fa-users"></i> Member</a></li>
-                        <li><a href="captain.html"><i class="fas fa-user-tie"></i> Captain</a></li>
-                        <li><a href="available-brand.html"><i class="fas fa-car"></i> Available Brand</a></li>
-                        <li><a href="service.html"><i class="fas fa-wrench"></i> Service</a></li>
-                        <li><a href="sparepart.html"><i class="fas fa-cogs"></i> Sparepart</a></li>
-                        <li><a href="carlist.html"><i class="fas fa-list"></i> Car List</a></li>
-                    </ul>
-                </li>
-                <li><a href="service-activity.html"><i class="fas fa-wrench"></i> Service Availability</a></li>
-                <li><a href="logbook.html"><i class="fas fa-book"></i> Logbook</a></li>
-                <li><a href="finance.html"><i class="fas fa-dollar-sign"></i> Finance</a></li>
-                <li><a href="promotion.html"><i class="fas fa-percent"></i> Promotion</a></li>
-                <li><a href="brand.html"><i class="fas fa-car"></i> Brand Registration</a></li>
-            </ul>
-        </nav>
+        </div>
+    </header>
 
-        <main class="main-content">
-            <div class="page-title">Workshop Information</div>
-            <div class="empty-state">
-                <i class="fas fa-building"></i>
-                <h3>No Workshop Information Available</h3>
-                <p>Please add or manage workshop details to view content here.</p>
+    <div>
+        <div id="sidebar-slot"></div>
+
+        <main role="main">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Data Management</h1>
+                    <p class="page-subtitle">Kelola semua data master bengkel dalam satu tempat</p>
+                </div>
+            </div>
+
+            <div class="data-hub-grid">
+                <a href="workshop.html" class="hub-card">
+                    <span class="hub-icon"><i class="fas fa-info-circle"></i></span>
+                    <div class="hub-title">Workshop Information</div>
+                    <div class="hub-count">3</div>
+                    <div class="hub-sub">Cabang aktif</div>
+                    <div class="hub-card-footer">Lihat detail <i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="member.html" class="hub-card">
+                    <span class="hub-icon alt"><i class="fas fa-users"></i></span>
+                    <div class="hub-title">Member</div>
+                    <div class="hub-count">248</div>
+                    <div class="hub-sub">Total member terdaftar</div>
+                    <div class="hub-card-footer">Lihat detail <i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="captain.html" class="hub-card">
+                    <span class="hub-icon"><i class="fas fa-user-tie"></i></span>
+                    <div class="hub-title">Captain</div>
+                    <div class="hub-count">12</div>
+                    <div class="hub-sub">Mekanik &amp; kepala tim</div>
+                    <div class="hub-card-footer">Lihat detail <i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="brand.html" class="hub-card">
+                    <span class="hub-icon alt"><i class="fas fa-car"></i></span>
+                    <div class="hub-title">Available Brand</div>
+                    <div class="hub-count">18</div>
+                    <div class="hub-sub">Merek kendaraan didukung</div>
+                    <div class="hub-card-footer">Lihat detail <i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="sparepart.html" class="hub-card">
+                    <span class="hub-icon"><i class="fas fa-cog"></i></span>
+                    <div class="hub-title">Sparepart</div>
+                    <div class="hub-count">40</div>
+                    <div class="hub-sub">SKU di inventory <span class="pill danger" style="margin-left: 6px;">3 Low</span></div>
+                    <div class="hub-card-footer">Lihat detail <i class="fas fa-arrow-right"></i></div>
+                </a>
+                <a href="carlist.html" class="hub-card">
+                    <span class="hub-icon alt"><i class="fas fa-list"></i></span>
+                    <div class="hub-title">Car List</div>
+                    <div class="hub-count">156</div>
+                    <div class="hub-sub">Kendaraan terdaftar</div>
+                    <div class="hub-card-footer">Lihat detail <i class="fas fa-arrow-right"></i></div>
+                </a>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Aktivitas Master Data Terbaru</h2>
+                        <p class="muted-sub">Perubahan pada data master selama 7 hari terakhir</p>
+                    </div>
+                </div>
+                <table class="data-table" aria-label="Recent Activity">
+                    <thead>
+                        <tr>
+                            <th>Waktu</th>
+                            <th>Entity</th>
+                            <th>Aksi</th>
+                            <th>Oleh</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2 jam lalu</td>
+                            <td><strong>Member</strong></td>
+                            <td><span class="pill success">Ditambahkan</span></td>
+                            <td>Budi Santoso</td>
+                            <td>John Doe • Premium</td>
+                        </tr>
+                        <tr>
+                            <td>5 jam lalu</td>
+                            <td><strong>Sparepart</strong></td>
+                            <td><span class="pill warning">Diubah</span></td>
+                            <td>Ani Wijaya</td>
+                            <td>Oil Filter — stok 50 → 12</td>
+                        </tr>
+                        <tr>
+                            <td>Kemarin</td>
+                            <td><strong>Captain</strong></td>
+                            <td><span class="pill success">Ditambahkan</span></td>
+                            <td>Super Admin</td>
+                            <td>Yanto • Surabaya Branch</td>
+                        </tr>
+                        <tr>
+                            <td>2 hari lalu</td>
+                            <td><strong>Workshop</strong></td>
+                            <td><span class="pill danger">Dihapus</span></td>
+                            <td>Super Admin</td>
+                            <td>Cabang Bekasi (inactive)</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-        }
-
-        function toggleSubmenu(event, element) {
-            event.preventDefault();
-            const parentLi = element.parentElement;
-            const submenu = parentLi.querySelector('.submenu');
-            const toggleIcon = parentLi.querySelector('.toggle-icon');
-            const isOpen = parentLi.classList.contains('open');
-
-            // Close all open submenus
-            document.querySelectorAll('.sidebar-menu > li.open').forEach(li => {
-                li.classList.remove('open');
-                li.querySelector('.submenu').style.maxHeight = '0';
-                li.querySelector('.toggle-icon').classList.remove('open');
-                li.querySelector('a').setAttribute('aria-expanded', 'false');
-            });
-
-            // Toggle current submenu
-            if (!isOpen) {
-                parentLi.classList.add('open');
-                submenu.style.maxHeight = submenu.scrollHeight + 'px';
-                toggleIcon.classList.add('open');
-                element.setAttribute('aria-expanded', 'true');
-            } else {
-                element.setAttribute('aria-expanded', 'false');
-            }
-        }
-
-        function setActiveItem() {
-            const links = document.querySelectorAll('.sidebar-menu a');
-            links.forEach(link => {
-                if (link.href === window.location.href) {
-                    link.parentElement.classList.add('active');
-                    // If submenu item is active, open the parent submenu
-                    const parentSubmenu = link.closest('.submenu');
-                    if (parentSubmenu) {
-                        const parentLi = parentSubmenu.parentElement;
-                        parentLi.classList.add('open');
-                        parentSubmenu.style.maxHeight = parentSubmenu.scrollHeight + 'px';
-                        parentLi.querySelector('.toggle-icon').classList.add('open');
-                        parentLi.querySelector('a').setAttribute('aria-expanded', 'true');
-                    }
-                } else {
-                    link.parentElement.classList.remove('active');
-                }
-            });
-        }
-
-        window.onload = setActiveItem;
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>

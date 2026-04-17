@@ -10,15 +10,15 @@
     <style>
         :root {
             /* Color Palette (Aligned with Dashboard) */
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gold-gradient: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-            --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            --bg-primary: #f8fafc;
+            --primary-gradient: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+            --accent-gradient: linear-gradient(135deg, #fde047 0%, #eab308 100%);
+            --gold-gradient: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+            --success-gradient: linear-gradient(135deg, #16A34A 0%, #22C55E 100%);
+            --bg-primary: #fefce8;
             --bg-secondary: #ffffff;
-            --text-primary: #1a202c;
-            --text-secondary: #718096;
-            --border-color: #e2e8f0;
+            --text-primary: #1F2937;
+            --text-secondary: #6B7280;
+            --border-color: #fde047;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
             --shadow-lg: 0 8px 25px rgba(0,0,0,0.12);
@@ -261,7 +261,7 @@
         }
 
         .form-input:invalid:not(:placeholder-shown) {
-            border-color: #ff4757;
+            border-color: #DC2626;
             box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.1);
         }
 
@@ -467,7 +467,8 @@
                 align-items: flex-start;
             }
         }
-    </style>
+        </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="login-container" role="main">
@@ -563,5 +564,6 @@
         // Focus Management
         document.getElementById('username').focus();
     </script>
+    <script src="app.js"></script>
 </body>
 </html>
